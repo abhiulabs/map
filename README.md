@@ -1,6 +1,6 @@
 # Map for Gatekeeper-Hub Scans
 
-Right now, it is a standalone project. Will be integrated into GK-Hub
+Currently, it is a standalone project. Will be integrated into GK-Hub
 
 # Installation
 
