@@ -18,10 +18,12 @@ $(document).ready(function() {
     copy.attr("id", currentComputer);
     copy.attr("data-toggle", "modal");
     copy.attr("data-target", "#computerModal");
+    copy.addClass("deletable");
 
     // copy.css("position", "relative");
     copy.on("click", function(e) {
       $(this).css("background-color", "lightblue");
+
       createComputerModal(currentComputer);
     });
     copy.on("dblclick", function(e) {
@@ -33,7 +35,7 @@ $(document).ready(function() {
       // helper: "clone",
       containment: ".droppable",
       cancel: false,
-      scope: "item",
+      scope: "grid",
       revert: true,
       revertDuration: 10,
       drag: function(ev, ui) {
@@ -50,7 +52,7 @@ $(document).ready(function() {
       helper: "clone",
       containment: ".droppable",
       cancel: false,
-      scope: "item",
+      scope: "grid",
       revert: true,
       revertDuration: 10,
       drag: function(ev, ui) {
@@ -158,6 +160,16 @@ $(document).ready(function() {
     // return modalDOM;
   }
 
+  // Show computerModal after dropping into tile
+
+  function showComputerModal(computer) {
+    var computerId = computer.attr("id");
+    createComputerModal(computerId);
+    $("#computerModal").modal({
+      show: true
+    });
+  }
+
   // create item draggable..
   // Pass different selectors for different items
 
@@ -166,19 +178,21 @@ $(document).ready(function() {
   $(".droppable-tile").droppable({
     greedy: true,
     // accept: "#rectCopy",
-    scope: "item",
+    scope: "grid",
     classes: {
       "ui-droppable-active": "ui-state-active",
       "ui-droppable-hover": "ui-state-hover"
     },
     drop: function(ev, ui) {
       ev.preventDefault();
-      // var copy = getClone("#computer");
+      // Cloning should be done only when dragging from the item palette
       if (!isInsideTile) {
         var copy = getClone("#computer", ui);
         $(this)
           // .css("z-index", 1)
           .append(copy);
+        // Show computer modal after dropping first
+        showComputerModal(copy);
       } else {
         $(this)
           // .css("z-index", 1)

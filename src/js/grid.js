@@ -10,6 +10,14 @@ $(document).ready(function() {
 
   // ---- Start Function definitions
 
+  function deleteItemFromTrash(item) {
+    if (item.is(".item")) {
+      item.fadeOut(function() {
+        item.remove();
+      });
+    }
+  }
+
   function createGrid() {
     (function createGridContainer() {
       $("#map-grid-container")
@@ -55,8 +63,50 @@ $(document).ready(function() {
     }
   }
 
+  function createTrash() {
+    $("#map-trash").droppable({
+      greedy: true,
+      // accept: ".deletable",
+      scope: "grid",
+      // classes: {
+      //   "ui-droppable-active": "map-trash-state-active",
+      //   "ui-droppable-hover": "map-trash-state-hover"
+      // },
+      activate: function(ev, ui) {
+        if ($(ui.draggable).hasClass("deletable")) {
+          // $(ev.target).removeClass("ui-droppable-active ui-droppable-hover");
+          $(this).addClass("map-trash-state-active");
+        }
+      },
+      deactivate: function(ev, ui) {
+        if ($(ui.draggable).hasClass("deletable")) {
+          // $(ev.target).removeClass("ui-droppable-active ui-droppable-hover");
+          $(this).removeClass("map-trash-state-active");
+          $(this).removeClass("map-trash-state-hover");
+        }
+      },
+      over: function(ev, ui) {
+        if ($(ui.draggable).hasClass("deletable")) {
+          // $(ev.target).removeClass("ui-droppable-active ui-droppable-hover");
+          $(this).addClass("map-trash-state-hover");
+        }
+      },
+      out: function(ev, ui) {
+        if ($(ui.draggable).hasClass("deletable")) {
+          // $(ev.target).removeClass("ui-droppable-active ui-droppable-hover");
+          $(this).removeClass("map-trash-state-hover");
+        }
+      },
+      drop: function(ev, ui) {
+        if ($(ui.draggable).hasClass("deletable")) {
+          deleteItemFromTrash(ui.draggable);
+        }
+      }
+    });
+  }
   // ---- End of Function definitions
 
   // 1... Create Grid
   createGrid();
+  createTrash();
 });

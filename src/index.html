@@ -37,11 +37,18 @@
     You need to enable JavaScript to run this app.
   </noscript>
   <div class="droppable m-5">
-    <div id="root"></div>
-    <div id="map-grid-container"></div>
+    <!-- <div id="root"></div> -->
+    <div class="d-flex droppable">
+      <div id="map-grid-container"></div>
+      <div id="map-trash" class="bg-light ml-3 d-flex justify-content-center align-items-center droppable">
+        Drag Items here to delete
+      </div>
+    </div>
     <div id="map-palette-container">
-      <div class="position-relative bg-dark p-5 my-5 clearfix ui-widget-content">
-        <button id="computer" class="computer-style"></button>
+      <div class="position-relative bg-light p-5 my-5 clearfix ui-widget-content">
+        <button id="computer" class="computer-style bg-transparent item">
+          <img src="img/computer.png" class="computer-image" />
+        </button>
         <button id="btnRemoveGridBorders" class="btn btn-warning float-right">
           Remove Grid in Selection
         </button>
