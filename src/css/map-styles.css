@@ -1,0 +1,42 @@
+html,
+body {
+    box-sizing: border-box;
+}
+
+.rect-style {
+    height: 20px;
+    width: 20px;
+    border-radius: 10px;
+}
+
+.computer-style {
+    border: none;
+    text-decoration: none;
+    height: 20px;
+    width: 20px;
+    border-radius: 15px;
+    background-color: #E85D75;
+    top: 0;
+    left: 0;
+}
+
+.map-grid .ui-selecting {
+    background: #e0e0e0 !important;
+}
+
+.map-grid .ui-selected {
+    background: #808080 !important;
+    color: white;
+}
+
+.map-grid .ui-state-active {
+    /* background: #808080 !important; */
+    color: white;
+    border: 1px dotted #e85d75;
+}
+
+.map-grid .ui-state-hover {
+    /* background: #808080 !important; */
+    color: white;
+    border: 3px solid #e85d75;
+}
