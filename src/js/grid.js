@@ -66,7 +66,6 @@ $(document).ready(function() {
   function createTrash() {
     $("#map-trash").droppable({
       greedy: true,
-      // accept: ".deletable",
       scope: "grid",
       // classes: {
       //   "ui-droppable-active": "map-trash-state-active",
@@ -74,26 +73,22 @@ $(document).ready(function() {
       // },
       activate: function(ev, ui) {
         if ($(ui.draggable).hasClass("deletable")) {
-          // $(ev.target).removeClass("ui-droppable-active ui-droppable-hover");
           $(this).addClass("map-trash-state-active");
         }
       },
       deactivate: function(ev, ui) {
         if ($(ui.draggable).hasClass("deletable")) {
-          // $(ev.target).removeClass("ui-droppable-active ui-droppable-hover");
           $(this).removeClass("map-trash-state-active");
           $(this).removeClass("map-trash-state-hover");
         }
       },
       over: function(ev, ui) {
         if ($(ui.draggable).hasClass("deletable")) {
-          // $(ev.target).removeClass("ui-droppable-active ui-droppable-hover");
           $(this).addClass("map-trash-state-hover");
         }
       },
       out: function(ev, ui) {
         if ($(ui.draggable).hasClass("deletable")) {
-          // $(ev.target).removeClass("ui-droppable-active ui-droppable-hover");
           $(this).removeClass("map-trash-state-hover");
         }
       },

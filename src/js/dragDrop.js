@@ -2,6 +2,18 @@ $(document).ready(function() {
   var currentDraggingItem = "";
   var itemIds = [];
   var counter = 0;
+  var computerList = [
+    "Computer 1",
+    "Computer 2",
+    "Computer 3",
+    "Computer 4",
+    "Computer 5",
+    "SVP-DESKTOP",
+    "SID-VM-WIN10",
+    "SAI's COMPUTER"
+  ];
+
+  var assignedComputerList = [];
 
   // You can clone only from the palette, once dropped inside tiles
   var isInsideTile = false;
@@ -15,7 +27,8 @@ $(document).ready(function() {
     // var copy = $(selector).clone();
     var copy = $(ui.draggable).clone();
     var currentComputer = counter++;
-    copy.attr("id", currentComputer);
+    var currentComputerId = "computer-" + currentComputer;
+    copy.attr("id", currentComputerId);
     copy.attr("data-toggle", "modal");
     copy.attr("data-target", "#computerModal");
     copy.addClass("deletable");
@@ -24,7 +37,7 @@ $(document).ready(function() {
     copy.on("click", function(e) {
       $(this).css("background-color", "lightblue");
 
-      createComputerModal(currentComputer);
+      createComputerModal(currentComputerId);
     });
     copy.on("dblclick", function(e) {
       $(this).remove();
@@ -66,49 +79,52 @@ $(document).ready(function() {
 
   // Function to create modal window to add computer to after dropped in map tile
   function createComputerModal(currentComputer) {
-    var computerList = [
-      "Computer 1",
-      "Computer 2",
-      "Computer 3",
-      "Computer 4",
-      "Computer 5",
-      "SVP-DESKTOP",
-      "SID-VM-WIN10",
-      "SAI's COMPUTER"
-    ];
+    // Assign computer to the computer icon
+    function assignComputer(computer) {
+      $("#" + currentComputer).data("computer", computer);
+      // Close modal after assigning computer
+      $("#computerModal").modal("hide");
+      assignedComputerList.push(computer);
+    }
+
+    // The computer button in modal list
+    function createComputerButton(computer) {
+      var newBtn = $("<button></button>");
+      newBtn.text(computer);
+      newBtn.addClass("list-group-item list-group-item-action");
+      newBtn.on("click", function() {
+        assignComputer(computer);
+      });
+
+      return newBtn;
+    }
 
     function updateComputerListOnSearch(searchTerm) {
-      var output = "";
+      var cmpBtnContainer = $("<div></div>");
+      // var output = "";
       if (searchTerm === "") {
         computerList.forEach(function(computer, i) {
-          output =
-            output +
-            '<button type="button" class="list-group-item list-group-item-action">' +
-            computer +
-            "</button>";
+          if (!assignedComputerList.includes(computer)) {
+            var newButton = createComputerButton(computer);
+            cmpBtnContainer.append(newButton);
+          }
         });
       } else {
         computerList.forEach(function(computer, i) {
-          if (computer.toLowerCase().includes(searchTerm.toLowerCase())) {
-            output =
-              output +
-              '<button type="button" class="list-group-item list-group-item-action">' +
-              computer +
-              "</button>";
+          if (!assignedComputerList.includes(computer)) {
+            if (computer.toLowerCase().includes(searchTerm.toLowerCase())) {
+              var newButton = createComputerButton(computer);
+              cmpBtnContainer.append(newButton);
+            }
           }
         });
       }
       // console.log(output);
 
       $("#modalComputerList").empty();
-      // console.log($("#modalComputerList").html());
 
-      $("#modalComputerList").append(output);
-      return output;
-    }
-
-    function deleteComputer(id) {
-      $("#" + id).remove();
+      $("#modalComputerList").append(cmpBtnContainer);
+      // return output;
     }
 
     const modalDOM = `<div class="modal fade" id="computerModal" tabindex="-1" role="dialog" aria-labelledby="computerModalTitle" aria-hidden="true">
