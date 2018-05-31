@@ -13,7 +13,7 @@ $(document).ready(function() {
   // Define Functions here
 
   // Clone the computer/item when dragged from palette
-  function getClone(selector, ui) {
+  function getClone(ui) {
     // var copy = $(selector).clone();
     var copy = $(ui.draggable).clone();
     var currentComputer = counter++;
@@ -25,12 +25,8 @@ $(document).ready(function() {
 
     // copy.css("position", "relative");
     copy.on("click", function(e) {
-      $(this).css("background-color", "lightblue");
-
-      createComputerModal(currentComputerId);
-    });
-    copy.on("dblclick", function(e) {
-      $(this).remove();
+      // createComputerModal(copy);
+      modalUtils.showComputerModalOnClick(copy);
     });
 
     // Even the dropped item should be draggable
@@ -43,13 +39,13 @@ $(document).ready(function() {
       revertDuration: 10,
       drag: function(ev, ui) {
         isInsideTile = true;
-        // $(this).css("z-index", 99);
         currentDraggingItem = ev.target.id;
       }
     });
 
     return copy;
   }
+
   function createDraggable(selector) {
     $(selector).draggable({
       helper: "clone",
@@ -67,121 +63,121 @@ $(document).ready(function() {
     });
   }
 
-  // Function to create modal window to add computer to after dropped in map tile
-  function createComputerModal(currentComputer) {
-    // Assign computer to the computer icon
-    function assignComputer(computer) {
-      // Check if there is already a computer assigned
-      var existingComputer = $("#" + currentComputer).data().computer;
+  // // Function to create modal window to add computer to after dropped in map tile
+  // function createComputerModal(currentComputer) {
+  //   // Assign computer to the computer icon
+  //   function assignComputer(computerName) {
+  //     // Check if there is already a computer assigned
+  //     var existingComputer = currentComputer.data().computer;
 
-      if (existingComputer !== undefined) {
-        console.log("Already has a computer " + existingComputer);
-        console.log("Reassigning to " + computer);
-        DATA.addComputerBack(existingComputer);
-      }
+  //     if (existingComputer !== undefined) {
+  //       console.log("Already has a computer " + existingComputer);
+  //       console.log("Reassigning to " + computer);
+  //       DATA.addComputerBack(existingComputer);
+  //     }
 
-      $("#" + currentComputer).data("computer", computer);
-      // Close modal after assigning computer
-      $("#computerModal").modal("hide");
-      // assignedComputerList.push(computer);
-      DATA.addComputerToAssignedList(computer);
-    }
+  //     currentComputer.data("computer", computerName);
+  //     // Close modal after assigning computer
+  //     $("#computerModal").modal("hide");
+  //     // assignedComputerList.push(computer);
+  //     DATA.addComputerToAssignedList(computerName);
+  //   }
 
-    // The computer button in modal list
-    function createComputerButton(computer) {
-      var newBtn = $("<button></button>");
-      newBtn.text(computer);
-      newBtn.addClass("list-group-item list-group-item-action");
-      newBtn.on("click", function() {
-        assignComputer(computer);
-      });
+  //   // The computer button in modal list
+  //   function createComputerButton(computerName) {
+  //     var newBtn = $("<button></button>");
+  //     newBtn.text(computerName);
+  //     newBtn.addClass("list-group-item list-group-item-action");
+  //     newBtn.on("click", function() {
+  //       assignComputer(computerName);
+  //     });
 
-      return newBtn;
-    }
+  //     return newBtn;
+  //   }
 
-    function updateComputerListOnSearch(searchTerm) {
-      var cmpBtnContainer = $("<div></div>");
-      // var output = "";
-      if (searchTerm === "") {
-        $.each(DATA.getComputerList(), function(i, computer) {
-          // if (!assignedComputerList.includes(computer)) {
-          var newButton = createComputerButton(computer);
-          cmpBtnContainer.append(newButton);
-          // }
-        });
-      } else {
-        $.each(DATA.getComputerList(), function(i, computer) {
-          // if (!assignedComputerList.includes(computer)) {
-          if (computer.toLowerCase().includes(searchTerm.toLowerCase())) {
-            var newButton = createComputerButton(computer);
-            cmpBtnContainer.append(newButton);
-          }
-          // }
-        });
-      }
+  //   function updateComputerListOnSearch(searchTerm) {
+  //     var cmpBtnContainer = $("<div></div>");
+  //     // var output = "";
+  //     if (searchTerm === "") {
+  //       $.each(DATA.getComputerList(), function(i, computer) {
+  //         // if (!assignedComputerList.includes(computer)) {
+  //         var newButton = createComputerButton(computer);
+  //         cmpBtnContainer.append(newButton);
+  //         // }
+  //       });
+  //     } else {
+  //       $.each(DATA.getComputerList(), function(i, computer) {
+  //         // if (!assignedComputerList.includes(computer)) {
+  //         if (computer.toLowerCase().includes(searchTerm.toLowerCase())) {
+  //           var newButton = createComputerButton(computer);
+  //           cmpBtnContainer.append(newButton);
+  //         }
+  //         // }
+  //       });
+  //     }
 
-      $("#modalComputerList").empty();
+  //     $("#modalComputerList").empty();
 
-      $("#modalComputerList").append(cmpBtnContainer);
-      // return output;
-    }
+  //     $("#modalComputerList").append(cmpBtnContainer);
+  //     // return output;
+  //   }
 
-    const modalDOM = `<div class="modal fade" id="computerModal" tabindex="-1" role="dialog" aria-labelledby="computerModalTitle" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">Select a Computer</h5>
-            <!-- <button type="button" id="removeComputerBtn" class="btn btn-sm btn-danger" data-dismiss="modal" aria-label="Close" onclick="deleteComputer(${currentComputer});">
-              <span aria-hidden="true">Remove Computer</span>
-            </button> -->
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <form id="searchComputerModalForm" class="my-2" autocomplete="off">
-              <input id="computerInput" class="form-control" type="text" placeholder="Search for Computer" autofocus="true" />
-            </form>
-            <div id="modalComputerList" class="list-group"></div>
-          </div>
-        </div>
-      </div>
-    </div>`;
+  //   // Empty previous modals and recreate after every new click
+  //   $("#item-modal").empty();
+  //   $("#item-modal").append(modalDOM);
+  //   updateComputerListOnSearch("");
 
-    // Empty previous modals and recreate after every new click
-    $("#item-modal").empty();
-    $("#item-modal").append(modalDOM);
-    updateComputerListOnSearch("");
+  //   var form = $("#searchComputerModalForm");
 
-    var form = $("#searchComputerModalForm");
+  //   // Automatically focus computer search input
+  //   $("#computerModal").on("shown.bs.modal", function() {
+  //     $("#computerInput").trigger("focus");
+  //   });
 
-    // Automatically focus computer search input
-    $("#computerModal").on("shown.bs.modal", function() {
-      $("#computerInput").trigger("focus");
-    });
+  //   $("#computerInput").on("input", function(e) {
+  //     e.preventDefault();
+  //     var searchTerm = $("#computerInput").val();
+  //     updateComputerListOnSearch(searchTerm);
+  //   });
 
-    $("#computerInput").on("input", function(e) {
-      e.preventDefault();
-      var searchTerm = $("#computerInput").val();
-      updateComputerListOnSearch(searchTerm);
-    });
+  //   // Computer list should narrow down upon submit (Press Enter) or on input change
+  //   form.on("submit", function(e) {
+  //     e.preventDefault();
+  //     var searchTerm = $("#computerInput").val();
+  //     updateComputerListOnSearch(searchTerm);
+  //   });
+  //   // return modalDOM;
+  // }
 
-    // Computer list should narrow down upon submit (Press Enter) or on input change
-    form.on("submit", function(e) {
-      e.preventDefault();
-      var searchTerm = $("#computerInput").val();
-      updateComputerListOnSearch(searchTerm);
-    });
-    // return modalDOM;
-  }
+  // // Show computerModal after dropping into tile
 
-  // Show computerModal after dropping into tile
+  // function showComputerModal(computer) {
+  //   var computerId = computer.attr("id");
+  //   // createComputerModal(computerId);
+  //   createComputerModal(computer);
+  //   $("#computerModal").modal({
+  //     show: true
+  //   });
+  // }
 
-  function showComputerModal(computer) {
-    var computerId = computer.attr("id");
-    createComputerModal(computerId);
-    $("#computerModal").modal({
-      show: true
+  function addToolTipToComputer(computer) {
+    computer.attr({
+      // "data-toggle": "tooltip",
+      // "data-placement": "right",
+      // "data-html": "true",
+      title: `
+        <table>
+          <thead>
+            <th>Computer</th>
+          </thead>
+          <tbody>
+          <tr>
+            <td>Name</td>
+            <td>${computer.data("computer")}</td>
+          </tr>
+          </tbody>
+        </table>
+      `
     });
   }
 
@@ -200,18 +196,23 @@ $(document).ready(function() {
     },
     drop: function(ev, ui) {
       ev.preventDefault();
+
       // Cloning should be done only when dragging from the item palette
       if (!isInsideTile) {
-        var copy = getClone("#computer", ui);
+        var copy = getClone(ui);
         $(this)
           // .css("z-index", 1)
           .append(copy);
+
         // Show computer modal after dropping first
-        showComputerModal(copy);
+        // modalUtils.showComputerModal(copy);
+        modalUtils.showComputerModal(copy);
+        addToolTipToComputer(copy);
       } else {
         $(this)
           // .css("z-index", 1)
           .append(ui.draggable);
+        addToolTipToComputer(ui.draggable);
       }
     }
   });
