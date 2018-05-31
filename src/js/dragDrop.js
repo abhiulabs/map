@@ -2,16 +2,6 @@ $(document).ready(function() {
   var currentDraggingItem = "";
   var itemIds = [];
   var counter = 0;
-  var computerList = [
-    "Computer 1",
-    "Computer 2",
-    "Computer 3",
-    "Computer 4",
-    "Computer 5",
-    "SVP-DESKTOP",
-    "SID-VM-WIN10",
-    "SAI's COMPUTER"
-  ];
 
   var assignedComputerList = [];
 
@@ -81,10 +71,20 @@ $(document).ready(function() {
   function createComputerModal(currentComputer) {
     // Assign computer to the computer icon
     function assignComputer(computer) {
+      // Check if there is already a computer assigned
+      var existingComputer = $("#" + currentComputer).data().computer;
+
+      if (existingComputer !== undefined) {
+        console.log("Already has a computer " + existingComputer);
+        console.log("Reassigning to " + computer);
+        DATA.addComputerBack(existingComputer);
+      }
+
       $("#" + currentComputer).data("computer", computer);
       // Close modal after assigning computer
       $("#computerModal").modal("hide");
-      assignedComputerList.push(computer);
+      // assignedComputerList.push(computer);
+      DATA.addComputerToAssignedList(computer);
     }
 
     // The computer button in modal list
@@ -103,23 +103,22 @@ $(document).ready(function() {
       var cmpBtnContainer = $("<div></div>");
       // var output = "";
       if (searchTerm === "") {
-        computerList.forEach(function(computer, i) {
-          if (!assignedComputerList.includes(computer)) {
+        $.each(DATA.getComputerList(), function(i, computer) {
+          // if (!assignedComputerList.includes(computer)) {
+          var newButton = createComputerButton(computer);
+          cmpBtnContainer.append(newButton);
+          // }
+        });
+      } else {
+        $.each(DATA.getComputerList(), function(i, computer) {
+          // if (!assignedComputerList.includes(computer)) {
+          if (computer.toLowerCase().includes(searchTerm.toLowerCase())) {
             var newButton = createComputerButton(computer);
             cmpBtnContainer.append(newButton);
           }
-        });
-      } else {
-        computerList.forEach(function(computer, i) {
-          if (!assignedComputerList.includes(computer)) {
-            if (computer.toLowerCase().includes(searchTerm.toLowerCase())) {
-              var newButton = createComputerButton(computer);
-              cmpBtnContainer.append(newButton);
-            }
-          }
+          // }
         });
       }
-      // console.log(output);
 
       $("#modalComputerList").empty();
 

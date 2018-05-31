@@ -12,6 +12,13 @@ $(document).ready(function() {
 
   function deleteItemFromTrash(item) {
     if (item.is(".item")) {
+      if (item.data().computer) {
+        DATA.addComputerBack(item.data().computer);
+        console.log("Added computer " + item.data().computer + " back");
+      } else {
+        console.log("No computer assigned to the item");
+      }
+
       item.fadeOut(function() {
         item.remove();
       });
