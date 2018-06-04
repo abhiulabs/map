@@ -1,7 +1,7 @@
 var Storage = {
   saveMapToStorage: function() {
     try {
-      localStorage.setItem("data-test", $("#data-test").html());
+      var mapData = $("#map-grid-container").html();
       var serializedData = JSON.stringify(mapData);
       localStorage.setItem("gkhub-map", serializedData);
     } catch (error) {
@@ -11,7 +11,7 @@ var Storage = {
 
   loadMapFromStorage: function() {
     try {
-      var html = localStorage.getItem("data-test");
+      // var html = localStorage.getItem("gkhub-map");
       var dataFromStorage = JSON.parse(localStorage.getItem("gkhub-map"));
       return dataFromStorage || null;
     } catch (error) {
