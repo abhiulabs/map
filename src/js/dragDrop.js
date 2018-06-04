@@ -63,124 +63,6 @@ $(document).ready(function() {
     });
   }
 
-  // // Function to create modal window to add computer to after dropped in map tile
-  // function createComputerModal(currentComputer) {
-  //   // Assign computer to the computer icon
-  //   function assignComputer(computerName) {
-  //     // Check if there is already a computer assigned
-  //     var existingComputer = currentComputer.data().computer;
-
-  //     if (existingComputer !== undefined) {
-  //       console.log("Already has a computer " + existingComputer);
-  //       console.log("Reassigning to " + computer);
-  //       DATA.addComputerBack(existingComputer);
-  //     }
-
-  //     currentComputer.data("computer", computerName);
-  //     // Close modal after assigning computer
-  //     $("#computerModal").modal("hide");
-  //     // assignedComputerList.push(computer);
-  //     DATA.addComputerToAssignedList(computerName);
-  //   }
-
-  //   // The computer button in modal list
-  //   function createComputerButton(computerName) {
-  //     var newBtn = $("<button></button>");
-  //     newBtn.text(computerName);
-  //     newBtn.addClass("list-group-item list-group-item-action");
-  //     newBtn.on("click", function() {
-  //       assignComputer(computerName);
-  //     });
-
-  //     return newBtn;
-  //   }
-
-  //   function updateComputerListOnSearch(searchTerm) {
-  //     var cmpBtnContainer = $("<div></div>");
-  //     // var output = "";
-  //     if (searchTerm === "") {
-  //       $.each(DATA.getComputerList(), function(i, computer) {
-  //         // if (!assignedComputerList.includes(computer)) {
-  //         var newButton = createComputerButton(computer);
-  //         cmpBtnContainer.append(newButton);
-  //         // }
-  //       });
-  //     } else {
-  //       $.each(DATA.getComputerList(), function(i, computer) {
-  //         // if (!assignedComputerList.includes(computer)) {
-  //         if (computer.toLowerCase().includes(searchTerm.toLowerCase())) {
-  //           var newButton = createComputerButton(computer);
-  //           cmpBtnContainer.append(newButton);
-  //         }
-  //         // }
-  //       });
-  //     }
-
-  //     $("#modalComputerList").empty();
-
-  //     $("#modalComputerList").append(cmpBtnContainer);
-  //     // return output;
-  //   }
-
-  //   // Empty previous modals and recreate after every new click
-  //   $("#item-modal").empty();
-  //   $("#item-modal").append(modalDOM);
-  //   updateComputerListOnSearch("");
-
-  //   var form = $("#searchComputerModalForm");
-
-  //   // Automatically focus computer search input
-  //   $("#computerModal").on("shown.bs.modal", function() {
-  //     $("#computerInput").trigger("focus");
-  //   });
-
-  //   $("#computerInput").on("input", function(e) {
-  //     e.preventDefault();
-  //     var searchTerm = $("#computerInput").val();
-  //     updateComputerListOnSearch(searchTerm);
-  //   });
-
-  //   // Computer list should narrow down upon submit (Press Enter) or on input change
-  //   form.on("submit", function(e) {
-  //     e.preventDefault();
-  //     var searchTerm = $("#computerInput").val();
-  //     updateComputerListOnSearch(searchTerm);
-  //   });
-  //   // return modalDOM;
-  // }
-
-  // // Show computerModal after dropping into tile
-
-  // function showComputerModal(computer) {
-  //   var computerId = computer.attr("id");
-  //   // createComputerModal(computerId);
-  //   createComputerModal(computer);
-  //   $("#computerModal").modal({
-  //     show: true
-  //   });
-  // }
-
-  function addToolTipToComputer(computer) {
-    computer.attr({
-      // "data-toggle": "tooltip",
-      // "data-placement": "right",
-      // "data-html": "true",
-      title: `
-        <table>
-          <thead>
-            <th>Computer</th>
-          </thead>
-          <tbody>
-          <tr>
-            <td>Name</td>
-            <td>${computer.data("computer")}</td>
-          </tr>
-          </tbody>
-        </table>
-      `
-    });
-  }
-
   // create item draggable..
   // Pass different selectors for different items
 
@@ -196,23 +78,21 @@ $(document).ready(function() {
     },
     drop: function(ev, ui) {
       ev.preventDefault();
+      var coordinates = $(this).data("coordinates");
 
       // Cloning should be done only when dragging from the item palette
       if (!isInsideTile) {
         var copy = getClone(ui);
+        copy.data("coordinates", coordinates);
         $(this)
           // .css("z-index", 1)
           .append(copy);
 
         // Show computer modal after dropping first
-        // modalUtils.showComputerModal(copy);
         modalUtils.showComputerModal(copy);
-        addToolTipToComputer(copy);
       } else {
-        $(this)
-          // .css("z-index", 1)
-          .append(ui.draggable);
-        addToolTipToComputer(ui.draggable);
+        ui.draggable.data("coordinates", coordinates);
+        $(this).append(ui.draggable);
       }
     }
   });

@@ -31,7 +31,7 @@ $(document).ready(function() {
       function addTileToRow(i, j) {
         var d = $(`<div></div>`);
         d
-          .attr("id", i + "x" + j)
+          .attr("id", "tile-" + i + "x" + j)
           .css({ width: tileWidth, height: tileHeight })
           .data("coordinates", { x: i, y: j })
           .data("location", { room: "", floor: "", building: "" })

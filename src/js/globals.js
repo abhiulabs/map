@@ -1,3 +1,10 @@
+var x = 20;
+var y = 20;
+var containerWidth = 1000;
+var containerHeight = 500;
+var tileWidth = containerWidth / x;
+var tileHeight = containerHeight / x;
+
 const modalDOM = `<div class="modal fade" id="computerModal" tabindex="-1" role="dialog" aria-labelledby="computerModalTitle" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -19,3 +26,31 @@ const modalDOM = `<div class="modal fade" id="computerModal" tabindex="-1" role=
         </div>
       </div>
     </div>`;
+
+var computerIds = {};
+var addComputerWithId = function(computer, id) {
+  if (!computerIds.hasOwnProperty(computer)) {
+    computerIds[computer] = id;
+  } else {
+    alert("Resetting the id");
+    computerIds[computer] = id;
+  }
+  Storage.saveMapToStorage();
+};
+
+var getDOMIdForComputer = function(computer) {
+  if (!computerIds[computer]) {
+    return null;
+  }
+
+  return computerIds[computer];
+};
+
+var createSlug = function(computer) {
+  var slug = computer
+    .trim()
+    .toLowerCase()
+    .replace(/\'/g, "")
+    .replace(/\s+/g, "-");
+  return slug;
+};

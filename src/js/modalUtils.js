@@ -1,6 +1,20 @@
 var modalUtils = (function() {
   var computerElement = "";
 
+  var addToolTipToComputer = function(computer) {
+    var computerName = computer.data("computer");
+    var hasComputer = computerName && computerName.length ? true : false;
+    computer.popover("dispose");
+    computer.popover({
+      html: true,
+      placement: "right",
+      trigger: "hover",
+      title: `
+        <h6>${hasComputer ? computerName : "No computer assigned yet"}</h6>
+      `
+    });
+  };
+
   var assignComputer = function(computerName) {
     // Check if there is already a computer assigned
     var existingComputer = computerElement.data().computer;
@@ -12,9 +26,21 @@ var modalUtils = (function() {
     }
 
     computerElement.data("computer", computerName);
+
+    var slugForComputerId = createSlug(computerName);
+
+    computerElement.attr("id", slugForComputerId);
+    addComputerWithId(computerName, slugForComputerId);
+    console.log(computerName, computerElement.attr("id"));
+
+    // Everytime new computer name is assigned, change the tooltip to reflect the change
+    addToolTipToComputer(computerElement);
     // Close modal after assigning computer
     $("#computerModal").modal("hide");
     DATA.addComputerToAssignedList(computerName);
+
+    //TODO: Get probabilities after adding
+    HALBERDS.getProbabilities();
   };
 
   var createComputerButton = function(computerName) {
@@ -82,12 +108,14 @@ var modalUtils = (function() {
   var showComputerModal = function(computer) {
     computerElement = computer;
     createComputerModal();
+    addToolTipToComputer(computer);
     $("#computerModal").modal({ show: true });
   };
 
   var showComputerModalOnClick = function(computer) {
     computerElement = computer;
     createComputerModal();
+    addToolTipToComputer(computer);
   };
 
   return {
