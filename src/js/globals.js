@@ -32,7 +32,6 @@ var addComputerWithId = function(computer, id) {
   if (!computerIds.hasOwnProperty(computer)) {
     computerIds[computer] = id;
   } else {
-    alert("Resetting the id");
     computerIds[computer] = id;
   }
   Storage.saveMapToStorage();

@@ -2,7 +2,8 @@ var modalUtils = (function() {
   var computerElement = "";
 
   var addToolTipToComputer = function(computer) {
-    var computerName = computer.data("computer");
+    var computerName = computer.attr("data-computer");
+
     var hasComputer = computerName && computerName.length ? true : false;
     computer.popover("dispose");
     computer.popover({
@@ -15,23 +16,23 @@ var modalUtils = (function() {
     });
   };
 
-  var assignComputer = function(computerName) {
+  var assignComputer = function(computerElement, computerName) {
     // Check if there is already a computer assigned
-    var existingComputer = computerElement.data().computer;
+    var existingComputer = computerElement.attr("data-computer");
 
     if (existingComputer !== undefined) {
-      console.log("Already has a computer " + existingComputer);
-      console.log("Reassigning to " + computerName);
+      // console.log("Already has a computer " + existingComputer);
+      // console.log("Reassigning to " + computerName);
       DATA.addComputerBack(existingComputer);
     }
 
-    computerElement.data("computer", computerName);
+    computerElement.attr("data-computer", computerName);
 
     var slugForComputerId = createSlug(computerName);
 
-    computerElement.attr("id", slugForComputerId);
+    computerElement.attr("data-computer-id", slugForComputerId);
     addComputerWithId(computerName, slugForComputerId);
-    console.log(computerName, computerElement.attr("id"));
+    // console.log(computerName, computerElement.attr("id"));
 
     // Everytime new computer name is assigned, change the tooltip to reflect the change
     addToolTipToComputer(computerElement);
@@ -39,6 +40,7 @@ var modalUtils = (function() {
     $("#computerModal").modal("hide");
     DATA.addComputerToAssignedList(computerName);
 
+    Storage.saveMapToStorage();
     //TODO: Get probabilities after adding
     HALBERDS.getProbabilities();
   };
@@ -48,7 +50,7 @@ var modalUtils = (function() {
     newBtn.text(computerName);
     newBtn.addClass("list-group-item list-group-item-action");
     newBtn.on("click", function() {
-      assignComputer(computerName);
+      assignComputer(computerElement, computerName);
     });
 
     return newBtn;
@@ -120,6 +122,8 @@ var modalUtils = (function() {
 
   return {
     showComputerModal: showComputerModal,
-    showComputerModalOnClick: showComputerModalOnClick
+    showComputerModalOnClick: showComputerModalOnClick,
+    assignComputer: assignComputer,
+    computerElement: computerElement
   };
 })();

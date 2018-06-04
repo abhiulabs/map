@@ -1,52 +1,55 @@
-$(document).ready(function() {
-  var currentDraggingItem = "";
-  var itemIds = [];
-  var counter = 0;
+var DragDrop = {
+  currentDraggingItem: "",
+  itemIds: [],
+  counter: 0,
 
-  var assignedComputerList = [];
+  assignedComputerList: [],
 
   // You can clone only from the palette, once dropped inside tiles
-  var isInsideTile = false;
+  isInsideTile: false,
 
-  // ---- Global Variabls End ----
+  createDraggableCopy: function(copy) {
+    copy.each(function(index) {
+      $(this).draggable({
+        // helper: "clone",
+        containment: ".droppable",
+        cancel: false,
+        scope: "grid",
+        revert: true,
+        revertDuration: 10,
+        drag: function(ev, ui) {
+          DragDrop.isInsideTile = true;
+        }
+      });
+    });
 
-  // Define Functions here
+    return copy;
+  },
 
-  // Clone the computer/item when dragged from palette
-  function getClone(ui) {
-    // var copy = $(selector).clone();
+  getClone: function(ui) {
     var copy = $(ui.draggable).clone();
-    var currentComputer = counter++;
+    var currentComputer = DragDrop.counter++;
     var currentComputerId = "computer-" + currentComputer;
     copy.attr("id", currentComputerId);
+    copy.attr("data-item-type", "computer");
     copy.attr("data-toggle", "modal");
     copy.attr("data-target", "#computerModal");
     copy.addClass("deletable");
 
-    // copy.css("position", "relative");
     copy.on("click", function(e) {
-      // createComputerModal(copy);
       modalUtils.showComputerModalOnClick(copy);
     });
 
     // Even the dropped item should be draggable
-    copy.draggable({
-      // helper: "clone",
-      containment: ".droppable",
-      cancel: false,
-      scope: "grid",
-      revert: true,
-      revertDuration: 10,
-      drag: function(ev, ui) {
-        isInsideTile = true;
-        currentDraggingItem = ev.target.id;
-      }
-    });
+    copy = DragDrop.createDraggableCopy(copy);
 
     return copy;
-  }
+  },
 
-  function createDraggable(selector) {
+  reloadDraggability: function(selector) {
+    DragDrop.createDraggableCopy($(selector));
+  },
+  createDraggable: function(selector) {
     $(selector).draggable({
       helper: "clone",
       containment: ".droppable",
@@ -55,45 +58,47 @@ $(document).ready(function() {
       revert: true,
       revertDuration: 10,
       drag: function(ev, ui) {
-        isInsideTile = false;
-        // $(this).css("z-index", 1);
-        currentDraggingItem = ev.target.id;
-        // console.log(currentDraggingItem);
+        DragDrop.isInsideTile = false;
       }
     });
-  }
+  },
+  createDroppable: function(selector) {
+    $(selector).droppable({
+      greedy: true,
+      // accept: "#rectCopy",
+      scope: "grid",
+      classes: {
+        "ui-droppable-active": "ui-state-active",
+        "ui-droppable-hover": "ui-state-hover"
+      },
+      drop: function(ev, ui) {
+        ev.preventDefault();
+        var coordinates = $(this).attr("data-coordinates");
 
-  // create item draggable..
-  // Pass different selectors for different items
+        // Cloning should be done only when dragging from the item palette
+        if (!DragDrop.isInsideTile) {
+          var copy = DragDrop.getClone(ui);
+          copy.attr("data-coordinates", coordinates);
+          $(this)
+            // .css("z-index", 1)
+            .append(copy);
 
-  createDraggable("#computer");
-
-  $(".droppable-tile").droppable({
-    greedy: true,
-    // accept: "#rectCopy",
-    scope: "grid",
-    classes: {
-      "ui-droppable-active": "ui-state-active",
-      "ui-droppable-hover": "ui-state-hover"
-    },
-    drop: function(ev, ui) {
-      ev.preventDefault();
-      var coordinates = $(this).data("coordinates");
-
-      // Cloning should be done only when dragging from the item palette
-      if (!isInsideTile) {
-        var copy = getClone(ui);
-        copy.data("coordinates", coordinates);
-        $(this)
-          // .css("z-index", 1)
-          .append(copy);
-
-        // Show computer modal after dropping first
-        modalUtils.showComputerModal(copy);
-      } else {
-        ui.draggable.data("coordinates", coordinates);
-        $(this).append(ui.draggable);
+          // Show computer modal after dropping first
+          modalUtils.showComputerModal(copy);
+        } else {
+          ui.draggable.attr("data-coordinates", coordinates);
+          $(this).append(ui.draggable);
+        }
+        Storage.saveMapToStorage();
       }
-    }
-  });
+    });
+  },
+  init: function() {
+    DragDrop.createDraggable(".palette-computer");
+    DragDrop.createDroppable(".droppable-tile");
+  }
+};
+
+$(document).ready(function() {
+  DragDrop.init();
 });

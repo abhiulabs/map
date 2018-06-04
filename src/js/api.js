@@ -1,5 +1,5 @@
 var DATA = {
-  computers: [],
+  computers: JSON.parse(localStorage.getItem("gkhub-map-computers")) || [],
   computerCount: 0,
   assignedComputers: [],
   defaultComputers: [

@@ -1,5 +1,8 @@
 var HALBERDS = {
   getTileNumberToPutHalberd: function(coordinates) {
+    if (!coordinates) {
+      return;
+    }
     var inputX = coordinates.x;
     var inputY = coordinates.y;
     var resultX = 0;
@@ -40,7 +43,7 @@ var HALBERDS = {
 
     // console.clear();
     computers.forEach(function(c, i) {
-      console.log(c + " : " + probs[i]);
+      // console.log(c + " : " + probs[i]);
 
       if (probs[i] > closestProbability) {
         closestComputer = c;
@@ -48,12 +51,15 @@ var HALBERDS = {
       }
     });
 
-    console.log("Closest Computer: " + closestComputer);
-    console.log("Closest Prob: " + closestProbability);
-    console.log("Closest Comp Id: " + getDOMIdForComputer(closestComputer));
+    // console.log("Closest Computer: " + closestComputer);
+    // console.log("Closest Prob: " + closestProbability);
+    // console.log("Closest Comp Id: " + getDOMIdForComputer(closestComputer));
 
-    var closestComputerGrid = $("#" + getDOMIdForComputer(closestComputer));
-    closestGridCoordinates = closestComputerGrid.data("coordinates");
+    // var closestComputerGrid = $("#" + getDOMIdForComputer(closestComputer));
+    var closestComputerGrid = $(
+      "[data-computer-id=" + getDOMIdForComputer(closestComputer) + "]"
+    );
+    closestGridCoordinates = closestComputerGrid.attr("data-coordinates");
 
     var coordsForHalberd = HALBERDS.getTileNumberToPutHalberd(
       closestGridCoordinates

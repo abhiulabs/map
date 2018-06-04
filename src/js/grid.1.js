@@ -16,7 +16,7 @@ $(document).ready(function() {
     },
     createGrid: function() {
       (function createGridContainer() {
-        $(".map-grid-container")
+        $("#map-grid-container")
           .addClass("droppable map-grid")
           .css({
             display: "flex",
@@ -30,13 +30,11 @@ $(document).ready(function() {
 
       function addTileToRow(i, j) {
         var d = $(`<div></div>`);
-        d.attr("id", "tile-" + i + "x" + j)
+        d
+          .attr("id", "tile-" + i + "x" + j)
           .css({ width: tileWidth, height: tileHeight })
-          .attr("data-coordinates", JSON.stringify({ x: i, y: j }))
-          .attr(
-            "data-location",
-            JSON.stringify({ room: "", floor: "", building: "" })
-          )
+          .data("coordinates", { x: i, y: j })
+          .data("location", { room: "", floor: "", building: "" })
           .addClass("ui-widget-content droppable-tile bg-white");
 
         $(`#row-${i}`).append(d);
@@ -49,7 +47,7 @@ $(document).ready(function() {
           height: containerHeight / y,
           width: containerWidth
         });
-        $(".map-grid-container").append(row);
+        $("#map-grid-container").append(row);
       }
 
       for (var i = 0; i < x; i++) {
@@ -58,30 +56,20 @@ $(document).ready(function() {
           addTileToRow(i, j);
         }
       }
-      // Make grid selectable after creating
-
-      $(".map-grid").selectable({
-        stop: function() {
-          ids = "";
-        }
-      });
     },
     createTrash: function() {
       // Remove Item from trash
       function deleteItemFromTrash(item) {
         if (item.is(".item")) {
-          if (item.attr("data-computer")) {
-            DATA.addComputerBack(item.attr("data-computer"));
-            console.log(
-              "Added computer " + item.attr("data-computer") + " back"
-            );
+          if (item.data().computer) {
+            DATA.addComputerBack(item.data().computer);
+            console.log("Added computer " + item.data().computer + " back");
           } else {
             console.log("No computer assigned to the item");
           }
 
           item.fadeOut(function() {
             item.remove();
-            Storage.saveMapToStorage();
           });
         }
       }
@@ -124,13 +112,8 @@ $(document).ready(function() {
 
   // ---- End of Function definitions
 
-  if (localStorage.getItem("gkhub-map")) {
-    Storage.loadMapFromStorage();
-    Grid.createTrash();
-  } else {
-    // 1... Create Grid
-    Grid.createGrid();
-    // 2... Create Trash
-    Grid.createTrash();
-  }
+  // 1... Create Grid
+  Grid.createGrid();
+  // 2... Create Trash
+  Grid.createTrash();
 });
