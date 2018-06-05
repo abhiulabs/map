@@ -1,10 +1,12 @@
 $(document).ready(function() {
   $("#btnRemoveGridBorders").on("click", function(e) {
     $(".map-grid .ui-selected").css("border", "none");
+    Storage.saveMapToStorage();
   });
 
   $("#btnShowGridBorders").on("click", function(e) {
     $(".map-grid .ui-selected").css("border", "");
+    Storage.saveMapToStorage();
   });
 
   var ids = "";
